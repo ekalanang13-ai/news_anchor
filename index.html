@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Pengundian Teks Naskah News Anchor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy: #1b4332;
+      --teal: #2d6a4f;
+      --teal-dark: #1f4d38;
+      --ivory: #fbeaf0;
+      --btn-light: #ffe3ee;
+      --btn-light-text: #7a1f4b;
+      --pink: #ff4d94;
+      --pink-dark: #e02f78;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      color: var(--ivory);
+      background: url("https://i.ibb.co/2K6wZSp/batik-pattern.png") no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+      margin: 0;
+    }
+
+    /* Overlay hijau transparan, senada tone lomba debat */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(27, 67, 50, 0.92);
+      z-index: -1;
+    }
+
+    header{
+      width:100%;
+      background: var(--navy);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:18px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+    }
+    header img{
+      width:56px;
+      height:56px;
+      object-fit:contain;
+      background:#fff;
+      border-radius:50%;
+      padding:4px;
+    }
+    header h1{
+      font-family:'Baloo 2', sans-serif;
+      font-size: clamp(18px, 3vw, 26px);
+      font-weight:700;
+      margin:0;
+      color:#fff;
+      letter-spacing: 0.3px;
+    }
+
+    h2, h3, #judul-undian{
+      font-family:'Baloo 2', sans-serif;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.8s ease forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .glow {
+      text-shadow: 0 0 10px rgba(255, 77, 148, 0.7),
+                   0 0 20px rgba(255, 77, 148, 0.5),
+                   0 0 40px rgba(255, 122, 179, 0.35);
+    }
+    .btn {
+      font-family:'Baloo 2', sans-serif;
+      background: var(--btn-light);
+      border: 1px solid var(--btn-light-text);
+      color: var(--btn-light-text);
+      transition: all 0.3s;
+    }
+    .btn:hover {
+      background: #fff;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen">
+
+  <header>
+    <img src="logo.png" alt="Logo News Anchor" onerror="this.style.display='none'">
+    <h1>Lomba News Anchor — Pengundian Naskah Berita</h1>
+  </header>
+
+  <div class="w-full flex flex-col items-center justify-center flex-1 py-12">
+
+  <!-- Halaman Pengundian -->
+  <div id="undian-section" class="fade-in w-full max-w-4xl p-12 bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl text-center transition-all duration-500">
+    <h2 id="judul-undian" class="text-4xl font-extrabold mb-6 tracking-wide">Pengundian Teks Naskah Berita</h2>
+    <p id="instruksi-undian" class="mb-10 text-lg">Klik salah satu nomor untuk memilih teks naskah berita </p>
+    
+    <div id="nomor-container" class="grid grid-cols-3 sm:grid-cols-6 gap-6 mb-10">
+      <button class="btn py-10 text-2xl font-bold rounded-2xl shadow-xl" onclick="pilihSubtema(1)">1</button>
+      <button class="btn py-10 text-2xl font-bold rounded-2xl shadow-xl" onclick="pilihSubtema(2)">2</button>
+      <button class="btn py-10 text-2xl font-bold rounded-2xl shadow-xl" onclick="pilihSubtema(3)">3</button>
+      <button class="btn py-10 text-2xl font-bold rounded-2xl shadow-xl" onclick="pilihSubtema(4)">4</button>
+      <button class="btn py-10 text-2xl font-bold rounded-2xl shadow-xl" onclick="pilihSubtema(5)">5</button>
+      <button class="btn py-10 text-2xl font-bold rounded-2xl shadow-xl" onclick="pilihSubtema(6)">6</button>
+    </div>
+    
+    <h3 id="subtema-terpilih" class="hidden text-3xl font-semibold mb-8"></h3>
+    <button id="btn-start" onclick="nextStage()" class="hidden btn px-8 py-4 text-xl rounded-2xl shadow-lg"> Mulai</button>
+  </div>
+
+  <!-- Timer Section -->
+  <div id="timer-section" class="hidden fade-in w-full max-w-3xl p-12 bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl text-center">
+    <div class="timer text-8xl font-mono font-bold glow drop-shadow-lg my-12" id="timer">05:00</div>
+    <div class="flex justify-center gap-6">
+      <button id="btn-stop" onclick="toggleTimer()" class="btn px-6 py-3 rounded-2xl text-lg font-bold shadow-md"> Berhenti</button>
+      <button onclick="backToUndian()" class="btn px-6 py-3 rounded-2xl text-lg font-bold shadow-md"> Kembali</button>
+    </div>
+  </div>
+
+  </div>
+
+  <script>
+    const subtemaList = {
+      1: "OJK SIAPKAN APLIKASI 'INDONESIA ANTI-SCAM' UNTUK PERKUAT PERLINDUNGAN KONSUMEN DAN BERDAYAKAN PEREMPUAN",
+      2: "PENYIDIK POLDA SUMATERA UTARA MENANGKAP DUA TERSANGKA DAN MENETAPKAN SATU DPO DALAM KASUS SCAM CUPLIKAN FILM.",
+      3: "INDOSAT LUNCURKAN FITUR AI ANTI-SPAM & SCAM, LINDUNGI RATUSAN JUTA PENGGUNA DARI PENIPUAN DIGITAL",
+      4: "PERTAMINA PATRA NIAGA TEGASKAN INFORMASI PENDAFTARAN PANGKALAN LPG BERBAYAR ADALAH HOAX",
+      5: "PELAJAR JADI GARDA TERDEPAN, PEMKAB SANGGAU GAUNGKAN KAMPANYE ANTI HOAKS PADA PERINGATAN HPN 2026",
+      6: "PENIPUAN JUAL BELI MOBIL ONLINE, 12 TERSANGKA MENYAMAR SEBAGAI ANGGOTA TNI"
+    };
+
+    let timerInterval;
+    let remainingTime = 300; // 5 menit
+    let isRunning = false;
+
+    function pilihSubtema(num) {
+      document.getElementById("judul-undian").classList.add("hidden");
+      document.getElementById("instruksi-undian").classList.add("hidden");
+      document.getElementById("nomor-container").classList.add("hidden");
+
+      const subtemaEl = document.getElementById("subtema-terpilih");
+      subtemaEl.innerText = subtemaList[num];
+      subtemaEl.classList.remove("hidden");
+      document.getElementById("btn-start").classList.remove("hidden");
+    }
+
+    function nextStage() {
+      document.getElementById("undian-section").classList.add("hidden");
+      document.getElementById("timer-section").classList.remove("hidden");
+      startTimer(remainingTime, "timer");
+    }
+
+    function startTimer(duration, displayId) {
+      clearInterval(timerInterval);
+      isRunning = true;
+      let timer = duration;
+      const display = document.getElementById(displayId);
+
+      timerInterval = setInterval(function () {
+        let minutes = parseInt(timer / 60, 10);
+        let seconds = parseInt(timer % 60, 10);
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        display.textContent = minutes + ":" + seconds;
+        remainingTime = timer;
+
+        if (--timer < 0) {
+          clearInterval(timerInterval);
+          display.textContent = "Waktu Habis!";
+          isRunning = false;
+        }
+      }, 1000);
+    }
+
+    function toggleTimer() {
+      if (isRunning) {
+        clearInterval(timerInterval);
+        isRunning = false;
+        document.getElementById("btn-stop").innerText = "▶️ Lanjut";
+      } else {
+        startTimer(remainingTime, "timer");
+        document.getElementById("btn-stop").innerText = "⏹ Berhenti";
+      }
+    }
+
+    function backToUndian() {
+      clearInterval(timerInterval);
+      isRunning = false;
+      remainingTime = 300; // reset ke 5 menit
+      document.getElementById("timer-section").classList.add("hidden");
+      document.getElementById("undian-section").classList.remove("hidden");
+      document.getElementById("btn-start").classList.add("hidden");
+      document.getElementById("subtema-terpilih").classList.add("hidden");
+      document.getElementById("judul-undian").classList.remove("hidden");
+      document.getElementById("instruksi-undian").classList.remove("hidden");
+      document.getElementById("nomor-container").classList.remove("hidden");
+      document.getElementById("btn-stop").innerText = "⏹ Berhenti";
+      document.getElementById("timer").textContent = "05:00";
+    }
+  </script>
+</body>
+</html>
